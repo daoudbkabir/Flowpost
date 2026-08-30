@@ -12,38 +12,72 @@ const platforms = [
 
 const features = [
   {
+    number: "01",
     title: "One workspace",
-    text: "Bring your social content workflow into one clean workspace instead of managing every platform separately.",
+    text: "Keep your content planning and publishing workflow organized in one focused workspace.",
   },
   {
+    number: "02",
     title: "Platform-ready content",
-    text: "Prepare different titles, descriptions, keywords, hashtags, and media for each platform.",
+    text: "Prepare platform-specific titles, descriptions, hashtags, keywords, and media without losing context.",
   },
   {
+    number: "03",
     title: "Smart workflows",
-    text: "Create reusable workflows for different channels, brands, campaigns, and content types.",
+    text: "Create repeatable workflows for channels, brands, campaigns, and recurring content.",
   },
   {
-    title: "Schedule everything",
-    text: "Plan your publishing calendar and prepare content for multiple platforms from one place.",
+    number: "04",
+    title: "Schedule with clarity",
+    text: "Plan your publishing calendar so upcoming content is easy to understand at a glance.",
   },
   {
+    number: "05",
     title: "Built for creators",
-    text: "Keep the experience simple, organized, and easy to understand even when you manage many channels.",
+    text: "A straightforward interface designed to stay understandable as your content operation grows.",
   },
   {
+    number: "06",
     title: "Free-first foundation",
-    text: "FlowPost is designed around a zero-cost foundation, with paid services added only when absolutely necessary.",
+    text: "A zero-cost foundation designed to keep the basic experience accessible without requiring a credit card.",
   },
 ];
+
+const faqs = [
+  {
+    question: "What is FlowPost?",
+    answer:
+      "FlowPost is being designed as a simple social media workflow platform for organizing content creation, customization, scheduling, and publishing from one workspace.",
+  },
+  {
+    question: "Which platforms will FlowPost support?",
+    answer:
+      "The planned platform layer includes Facebook, Instagram, YouTube, TikTok, Bilibili, Snapchat, X, and additional platforms over time. These integrations are part of the roadmap and are not yet connected in this Phase 1 landing page.",
+  },
+  {
+    question: "Will every platform have its own settings?",
+    answer:
+      "Yes. The planned workflow is designed to allow platform-specific media, titles, descriptions, hashtags, keywords, and other publishing requirements.",
+  },
+  {
+    question: "Will FlowPost require a credit card?",
+    answer:
+      "The basic product experience is being designed around a no-credit-card-required, free-first foundation.",
+  },
+];
+
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+}
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({
-      behavior: "smooth",
-    });
+  const navigateTo = (id) => {
+    scrollTo(id);
     setMenuOpen(false);
   };
 
@@ -53,33 +87,41 @@ function App() {
         <div className="container header-inner">
           <button
             className="brand"
-            onClick={() => scrollTo("home")}
-            aria-label="FlowPost home"
+            onClick={() => navigateTo("home")}
+            aria-label="Go to FlowPost home"
           >
-            <span className="brand-mark">F</span>
+            <span className="brand-mark" aria-hidden="true">
+              F
+            </span>
             <span>FlowPost</span>
           </button>
 
           <button
-            className="menu-button"
+            className={`menu-button ${menuOpen ? "is-open" : ""}`}
             onClick={() => setMenuOpen((value) => !value)}
-            aria-label="Toggle navigation"
+            aria-expanded={menuOpen}
+            aria-controls="site-navigation"
+            aria-label={menuOpen ? "Close navigation" : "Open navigation"}
           >
             <span />
             <span />
             <span />
           </button>
 
-          <nav className={`nav ${menuOpen ? "nav-open" : ""}`}>
-            <button onClick={() => scrollTo("features")}>Features</button>
-            <button onClick={() => scrollTo("how-it-works")}>
+          <nav
+            id="site-navigation"
+            className={`nav ${menuOpen ? "nav-open" : ""}`}
+            aria-label="Primary navigation"
+          >
+            <button onClick={() => navigateTo("features")}>Features</button>
+            <button onClick={() => navigateTo("how-it-works")}>
               How it works
             </button>
-            <button onClick={() => scrollTo("platforms")}>Platforms</button>
-            <button onClick={() => scrollTo("faq")}>FAQ</button>
+            <button onClick={() => navigateTo("platforms")}>Platforms</button>
+            <button onClick={() => navigateTo("faq")}>FAQ</button>
             <button
               className="nav-cta"
-              onClick={() => scrollTo("get-started")}
+              onClick={() => navigateTo("get-started")}
             >
               Get started
             </button>
@@ -89,14 +131,11 @@ function App() {
 
       <main>
         <section className="hero" id="home">
-          <div className="hero-glow hero-glow-one" />
-          <div className="hero-glow hero-glow-two" />
-
-          <div className="container hero-grid">
+          <div className="hero-grid container">
             <div className="hero-copy">
               <div className="eyebrow">
-                <span className="status-dot" />
-                One workflow. Every platform.
+                <span className="status-dot" aria-hidden="true" />
+                <span>One workflow. Every platform.</span>
               </div>
 
               <h1>
@@ -105,50 +144,54 @@ function App() {
               </h1>
 
               <p className="hero-text">
-                Create, customize, schedule, and manage content for all your
-                social platforms from one simple workspace.
+                Create, customize, schedule, and organize your social content
+                from one simple workspace.
               </p>
 
               <div className="hero-actions">
                 <button
                   className="primary-button"
-                  onClick={() => scrollTo("get-started")}
+                  onClick={() => navigateTo("get-started")}
                 >
                   Start for free
-                  <span>→</span>
+                  <span aria-hidden="true">→</span>
                 </button>
 
                 <button
                   className="secondary-button"
-                  onClick={() => scrollTo("how-it-works")}
+                  onClick={() => navigateTo("how-it-works")}
                 >
                   See how it works
                 </button>
               </div>
 
-              <div className="trust-row">
+              <div className="trust-row" aria-label="Product highlights">
                 <span>No credit card required</span>
-                <span className="trust-separator">•</span>
+                <span className="trust-separator" aria-hidden="true">
+                  •
+                </span>
                 <span>Simple workflow</span>
-                <span className="trust-separator">•</span>
+                <span className="trust-separator" aria-hidden="true">
+                  •
+                </span>
                 <span>Creator focused</span>
               </div>
             </div>
 
-            <div className="hero-dashboard">
+            <div className="hero-dashboard" aria-label="FlowPost workspace preview">
               <div className="dashboard-window">
                 <div className="window-bar">
-                  <div className="window-dots">
+                  <div className="window-dots" aria-hidden="true">
                     <span />
                     <span />
                     <span />
                   </div>
                   <span className="window-title">FlowPost Workspace</span>
-                  <span className="window-status">● Live</span>
+                  <span className="window-status">Preview</span>
                 </div>
 
                 <div className="dashboard-content">
-                  <aside className="mini-sidebar">
+                  <aside className="mini-sidebar" aria-hidden="true">
                     <div className="mini-logo">F</div>
                     <div className="mini-nav active">⌂</div>
                     <div className="mini-nav">◫</div>
@@ -162,7 +205,7 @@ function App() {
                         <small>WORKSPACE</small>
                         <h3>Content overview</h3>
                       </div>
-                      <button>+ Create</button>
+                      <span className="mini-create">+ Create</span>
                     </div>
 
                     <div className="mini-stats">
@@ -171,11 +214,11 @@ function App() {
                         <strong>08</strong>
                       </div>
                       <div>
-                        <small>Scheduled</small>
+                        <small>Planned</small>
                         <strong>24</strong>
                       </div>
                       <div>
-                        <small>Platforms</small>
+                        <small>Channels</small>
                         <strong>07</strong>
                       </div>
                     </div>
@@ -183,22 +226,37 @@ function App() {
                     <div className="mini-card">
                       <div className="mini-card-head">
                         <div>
-                          <small>ACTIVE WORKFLOW</small>
+                          <small>WORKFLOW PREVIEW</small>
                           <strong>Product Campaign</strong>
                         </div>
-                        <span className="badge">Active</span>
+                        <span className="badge">Ready</span>
                       </div>
 
                       <div className="platform-list">
                         {platforms.slice(0, 4).map((platform, index) => (
                           <div className="platform-item" key={platform}>
-                            <span className={`platform-icon icon-${index}`}>
+                            <span
+                              className={`platform-icon icon-${index}`}
+                              aria-hidden="true"
+                            >
                               {platform.charAt(0)}
                             </span>
                             <span>{platform}</span>
-                            <span className="check">✓</span>
+                            <span className="check" aria-hidden="true">
+                              ✓
+                            </span>
                           </div>
                         ))}
+                      </div>
+                    </div>
+
+                    <div className="mini-progress">
+                      <div>
+                        <small>CONTENT PREPARATION</small>
+                        <span>4 of 6 steps ready</span>
+                      </div>
+                      <div className="progress-track">
+                        <span />
                       </div>
                     </div>
                   </div>
@@ -206,21 +264,28 @@ function App() {
               </div>
             </div>
           </div>
+
+          <div className="hero-glow hero-glow-one" aria-hidden="true" />
+          <div className="hero-glow hero-glow-two" aria-hidden="true" />
         </section>
 
         <section className="platform-strip" id="platforms">
           <div className="container">
-            <p>Built around the platforms creators use every day</p>
+            <div className="strip-copy">
+              <span className="section-label">PLATFORM ROADMAP</span>
+              <p>Designed around the platforms creators use every day</p>
+            </div>
+
             <div className="platforms">
               {platforms.map((platform) => (
                 <span key={platform}>
-                  <b>{platform.charAt(0)}</b>
+                  <b aria-hidden="true">{platform.charAt(0)}</b>
                   {platform}
                 </span>
               ))}
               <span>
-                <b>+</b>
-                Others
+                <b aria-hidden="true">+</b>
+                More over time
               </span>
             </div>
           </div>
@@ -230,18 +295,19 @@ function App() {
           <div className="container">
             <div className="section-heading">
               <span className="section-label">FEATURES</span>
-              <h2>Everything you need to keep your content moving.</h2>
+              <h2>Everything you need to keep content moving.</h2>
               <p>
-                FlowPost brings the repetitive parts of social publishing
-                together without making the interface complicated.
+                FlowPost brings repetitive social publishing work into a
+                clearer workflow without making the interface complicated.
               </p>
             </div>
 
             <div className="feature-grid">
-              {features.map((feature, index) => (
+              {features.map((feature) => (
                 <article className="feature-card" key={feature.title}>
-                  <div className="feature-number">
-                    {String(index + 1).padStart(2, "0")}
+                  <div className="feature-topline">
+                    <span className="feature-number">{feature.number}</span>
+                    <span className="feature-line" aria-hidden="true" />
                   </div>
                   <h3>{feature.title}</h3>
                   <p>{feature.text}</p>
@@ -255,11 +321,21 @@ function App() {
           <div className="container workflow-grid">
             <div className="section-heading left">
               <span className="section-label">HOW IT WORKS</span>
-              <h2>From idea to published content in a clear flow.</h2>
+              <h2>One clear flow from idea to publishing.</h2>
               <p>
-                Build a workflow once, define what each platform needs, and
-                keep your publishing process organized.
+                The planned FlowPost workflow keeps each stage visible and
+                makes platform-specific preparation easier to manage.
               </p>
+
+              <div className="workflow-sequence" aria-hidden="true">
+                <span>Create</span>
+                <i>→</i>
+                <span>Customize</span>
+                <i>→</i>
+                <span>Schedule</span>
+                <i>→</i>
+                <span>Publish</span>
+              </div>
             </div>
 
             <div className="steps">
@@ -269,7 +345,7 @@ function App() {
                   <h3>Create a workflow</h3>
                   <p>
                     Set up a dedicated workflow for a channel, brand,
-                    campaign, or content series.
+                    campaign, or recurring content series.
                   </p>
                 </div>
               </div>
@@ -277,9 +353,9 @@ function App() {
               <div className="step">
                 <span>02</span>
                 <div>
-                  <h3>Add your platforms</h3>
+                  <h3>Add your channels</h3>
                   <p>
-                    Connect the platforms you want to manage inside that
+                    Define the social channels you plan to manage inside that
                     workflow.
                   </p>
                 </div>
@@ -301,8 +377,8 @@ function App() {
                 <div>
                   <h3>Schedule and publish</h3>
                   <p>
-                    Organize your publishing time and manage the content from
-                    one dashboard.
+                    Organize publishing times and manage your content from a
+                    single workflow.
                   </p>
                 </div>
               </div>
@@ -317,17 +393,17 @@ function App() {
                 <span className="section-label">FLOWPOST</span>
                 <h2>Ready to simplify your content workflow?</h2>
                 <p>
-                  Start with a clean workspace designed to grow with your
-                  content operation.
+                  Start with a clean foundation designed to grow into a
+                  complete multi-platform workspace.
                 </p>
               </div>
 
               <button
                 className="primary-button"
-                onClick={() => scrollTo("home")}
+                onClick={() => navigateTo("home")}
               >
                 Get started
-                <span>→</span>
+                <span aria-hidden="true">→</span>
               </button>
             </div>
           </div>
@@ -338,44 +414,23 @@ function App() {
             <div className="section-heading">
               <span className="section-label">FAQ</span>
               <h2>Simple answers.</h2>
+              <p>
+                A few basics about what FlowPost is and what is planned next.
+              </p>
             </div>
 
             <div className="faq-grid">
-              <details>
-                <summary>What is FlowPost?</summary>
-                <p>
-                  FlowPost is a social media workflow platform designed to
-                  manage content preparation, scheduling, and publishing from
-                  one workspace.
-                </p>
-              </details>
-
-              <details>
-                <summary>Which platforms will FlowPost support?</summary>
-                <p>
-                  The planned platform layer includes Facebook, Instagram,
-                  YouTube, TikTok, Bilibili, Snapchat, X, and an option for
-                  additional platforms.
-                </p>
-              </details>
-
-              <details>
-                <summary>Will every platform have its own settings?</summary>
-                <p>
-                  Yes. The planned workflow interface separates platform
-                  content so you can use different titles, descriptions,
-                  hashtags, keywords, and media where required.
-                </p>
-              </details>
-
-              <details>
-                <summary>Will FlowPost require a credit card?</summary>
-                <p>
-                  The product is being designed around a zero-cost foundation.
-                  No credit-card requirement is part of the planned basic
-                  experience.
-                </p>
-              </details>
+              {faqs.map((faq) => (
+                <details key={faq.question}>
+                  <summary>
+                    <span>{faq.question}</span>
+                    <span className="faq-plus" aria-hidden="true">
+                      +
+                    </span>
+                  </summary>
+                  <p>{faq.answer}</p>
+                </details>
+              ))}
             </div>
           </div>
         </section>
@@ -384,8 +439,14 @@ function App() {
       <footer className="site-footer">
         <div className="container footer-main">
           <div className="footer-brand">
-            <button className="brand" onClick={() => scrollTo("home")}>
-              <span className="brand-mark">F</span>
+            <button
+              className="brand"
+              onClick={() => navigateTo("home")}
+              aria-label="Go to FlowPost home"
+            >
+              <span className="brand-mark" aria-hidden="true">
+                F
+              </span>
               <span>FlowPost</span>
             </button>
             <p>
@@ -396,44 +457,44 @@ function App() {
 
           <div className="footer-column">
             <h4>Product</h4>
-            <button onClick={() => scrollTo("features")}>Features</button>
-            <button onClick={() => scrollTo("how-it-works")}>
+            <button onClick={() => navigateTo("features")}>Features</button>
+            <button onClick={() => navigateTo("how-it-works")}>
               How it works
             </button>
-            <button onClick={() => scrollTo("platforms")}>Platforms</button>
+            <button onClick={() => navigateTo("platforms")}>Platforms</button>
           </div>
 
           <div className="footer-column">
             <h4>Company</h4>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
-            <a href="#careers">Careers</a>
+            <button type="button">About</button>
+            <button type="button">Contact</button>
+            <button type="button">Careers</button>
           </div>
 
           <div className="footer-column">
             <h4>Legal</h4>
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms of Service</a>
-            <a href="#cookies">Cookie Policy</a>
+            <button type="button">Privacy Policy</button>
+            <button type="button">Terms of Service</button>
+            <button type="button">Cookie Policy</button>
           </div>
         </div>
 
         <div className="container footer-bottom">
           <span>© 2026 FlowPost. All rights reserved.</span>
 
-          <div className="social-links">
-            <a href="#facebook" aria-label="Facebook">
+          <div className="social-links" aria-label="Social media links">
+            <button type="button" aria-label="Facebook">
               f
-            </a>
-            <a href="#instagram" aria-label="Instagram">
+            </button>
+            <button type="button" aria-label="Instagram">
               ◎
-            </a>
-            <a href="#youtube" aria-label="YouTube">
+            </button>
+            <button type="button" aria-label="YouTube">
               ▶
-            </a>
-            <a href="#linkedin" aria-label="LinkedIn">
+            </button>
+            <button type="button" aria-label="LinkedIn">
               in
-            </a>
+            </button>
           </div>
         </div>
       </footer>
