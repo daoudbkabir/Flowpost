@@ -247,20 +247,14 @@ function App() {
                       <span className="mini-create">+ Create</span>
                     </div>
 
-                    <div className="mini-stats">
-                      <div>
-                        <small>Workflows</small>
-                        <strong>08</strong>
-                      </div>
-                      <div>
-                        <small>Planned</small>
-                        <strong>24</strong>
-                      </div>
-                      <div>
-                        <small>Channels</small>
-                        <strong>07</strong>
-                      </div>
-                    </div>
+                    <div className="mini-stats mini-stats-five">
+  {dashboardStats.map(([label, value]) => (
+    <div key={label}>
+      <small>{label}</small>
+      <strong>{value}</strong>
+    </div>
+  ))}
+</div>
 
                     <div className="mini-card">
                       <div className="mini-card-head">
