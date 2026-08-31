@@ -365,15 +365,19 @@ function App() {
               </p>
 
               <div className="workflow-sequence" aria-hidden="true">
-                <span>Create</span>
-                <i>→</i>
-                <span>Customize</span>
-                <i>→</i>
-                <span>Schedule</span>
-                <i>→</i>
-                <span>Publish</span>
-              </div>
-            </div>
+  {workflowSteps.map((step, index) => (
+    <span
+      className="workflow-sequence-item"
+      key={step.title}
+    >
+      <span>{step.title}</span>
+
+      {index < workflowSteps.length - 1 && (
+        <i aria-hidden="true">→</i>
+      )}
+    </span>
+  ))}
+</div>
 
             <div className="steps">
               <div className="step">
