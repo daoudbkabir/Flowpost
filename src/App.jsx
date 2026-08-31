@@ -42,7 +42,7 @@ const features = [
     title: "Analytics & Learning",
     text: "Learn from content performance and use those signals to decide what to create next.",
   },
-
+];
   const workflowSteps = [
   {
     number: "01",
