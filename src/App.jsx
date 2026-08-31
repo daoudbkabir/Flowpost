@@ -358,11 +358,14 @@ function App() {
           <div className="container workflow-grid">
             <div className="section-heading left">
               <span className="section-label">HOW IT WORKS</span>
-              <h2>One clear flow from idea to publishing.</h2>
+              <h2>
+  From opportunity to learning,
+  in one flow.
+</h2>
               <p>
-                The planned FlowPost workflow keeps each stage visible and
-                makes platform-specific preparation easier to manage.
-              </p>
+  FlowPost is being developed around five connected stages:
+  Discover, Develop, Create, Publish, and Learn.
+</p>
 
               <div className="workflow-sequence" aria-hidden="true">
   {workflowSteps.map((step, index) => (
