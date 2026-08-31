@@ -257,31 +257,31 @@ function App() {
 </div>
 
                     <div className="mini-card">
-                      <div className="mini-card-head">
-                        <div>
-                          <small>WORKFLOW PREVIEW</small>
-                          <strong>Product Campaign</strong>
-                        </div>
-                        <span className="badge">Ready</span>
-                      </div>
+  <div className="mini-card-head">
+    <div>
+      <small>TRENDING NOW</small>
+      <strong>Content opportunities</strong>
+    </div>
+    <span className="badge">Preview</span>
+  </div>
 
-                      <div className="platform-list">
-                        {platforms.slice(0, 4).map((platform, index) => (
-                          <div className="platform-item" key={platform}>
-                            <span
-                              className={`platform-icon icon-${index}`}
-                              aria-hidden="true"
-                            >
-                              {platform.charAt(0)}
-                            </span>
-                            <span>{platform}</span>
-                            <span className="check" aria-hidden="true">
-                              ✓
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+  <div className="platform-list trend-list">
+    {trends.map((trend, index) => (
+      <div className="platform-item" key={trend}>
+        <span
+          className={`platform-icon icon-${index}`}
+          aria-hidden="true"
+        >
+          {index + 1}
+        </span>
+        <span>{trend}</span>
+        <span className="check" aria-hidden="true">
+          ↗
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
 
                     <div className="mini-progress">
                       <div>
