@@ -283,20 +283,21 @@ function App() {
   </div>
 </div>
 
-                    <div className="mini-progress">
-                      <div>
-                        <small>CONTENT PREPARATION</small>
-                        <span>4 of 6 steps ready</span>
-                      </div>
-                      <div className="progress-track">
-                        <span />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                    <div className="mini-progress next-up-card">
+  <div>
+    <small>NEXT UP</small>
+    <span>
+      Research → AI Video Script → Review → Productivity Reel
+    </span>
+  </div>
+
+  <div
+    className="progress-track"
+    aria-hidden="true"
+  >
+    <span />
+  </div>
+</div>
 
           <div className="hero-glow hero-glow-one" aria-hidden="true" />
           <div className="hero-glow hero-glow-two" aria-hidden="true" />
