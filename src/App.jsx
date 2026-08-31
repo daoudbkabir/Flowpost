@@ -42,6 +42,45 @@ const features = [
     title: "Analytics & Learning",
     text: "Learn from content performance and use those signals to decide what to create next.",
   },
+
+  const workflowSteps = [
+  {
+    number: "01",
+    title: "Discover",
+    text: "Find trends, niches and content opportunities.",
+  },
+  {
+    number: "02",
+    title: "Develop",
+    text: "Turn research and opportunities into strong content ideas.",
+  },
+  {
+    number: "03",
+    title: "Create",
+    text: "Build scripts, assets and platform-ready content.",
+  },
+  {
+    number: "04",
+    title: "Publish",
+    text: "Adapt and distribute content across platforms.",
+  },
+  {
+    number: "05",
+    title: "Learn",
+    text: "Analyze performance and decide what to create next.",
+  },
+];
+
+const dashboardStats = [
+  ["Ideas", "24"],
+  ["In Progress", "8"],
+  ["Ready", "12"],
+  ["Scheduled", "16"],
+  ["Published", "48"],
+];
+
+const trends = ["AI Agents", "AI Video", "Creator Economy"];
+
 ];
 const faqs = [
   {
