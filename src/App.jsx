@@ -14,36 +14,35 @@ const platforms = [
 const features = [
   {
     number: "01",
-    title: "One workspace",
-    text: "Keep your content planning and publishing workflow organized in one focused workspace.",
+    title: "Trend Discovery",
+    text: "Spot trends, niches, and content opportunities worth exploring before you create.",
   },
   {
     number: "02",
-    title: "Platform-ready content",
-    text: "Prepare platform-specific titles, descriptions, hashtags, keywords, and media without losing context.",
+    title: "Ideas & Research",
+    text: "Turn research and opportunities into stronger content ideas with a clear place to develop them.",
   },
   {
     number: "03",
-    title: "Smart workflows",
-    text: "Create repeatable workflows for channels, brands, campaigns, and recurring content.",
+    title: "Content Creation",
+    text: "Organize scripts, assets, and platform-ready content around one core idea.",
   },
   {
     number: "04",
-    title: "Schedule with clarity",
-    text: "Plan your publishing calendar so upcoming content is easy to understand at a glance.",
+    title: "Repurposing",
+    text: "Adapt one core piece of content into versions that fit different platforms and formats.",
   },
   {
     number: "05",
-    title: "Built for creators",
-    text: "A straightforward interface designed to stay understandable as your content operation grows.",
+    title: "Multi-platform Publishing",
+    text: "Prepare and distribute content across your channels while keeping the original context connected.",
   },
   {
     number: "06",
-    title: "Free-first foundation",
-    text: "A zero-cost foundation designed to keep the basic experience accessible without requiring a credit card.",
+    title: "Analytics & Learning",
+    text: "Learn from content performance and use those signals to decide what to create next.",
   },
 ];
-
 const faqs = [
   {
     question: "What is FlowPost?",
