@@ -306,9 +306,12 @@ function App() {
         <section className="platform-strip" id="platforms">
           <div className="container">
             <div className="strip-copy">
-              <span className="section-label">PLATFORM ROADMAP</span>
-              <p>Designed around the platforms creators use every day</p>
-            </div>
+  <span className="section-label">PLATFORM WORKFLOW</span>
+  <p>Create once. Adapt everywhere.</p>
+  <small>
+    Platform-native versions are part of the FlowPost product direction.
+  </small>
+</div>
 
             <div className="platforms">
               {platforms.map((platform) => (
