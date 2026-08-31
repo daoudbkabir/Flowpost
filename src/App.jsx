@@ -383,51 +383,17 @@ function App() {
 </div>
 
             <div className="steps">
-              <div className="step">
-                <span>01</span>
-                <div>
-                  <h3>Create a workflow</h3>
-                  <p>
-                    Set up a dedicated workflow for a channel, brand,
-                    campaign, or recurring content series.
-                  </p>
-                </div>
-              </div>
+  {workflowSteps.map((step) => (
+    <div className="step" key={step.number}>
+      <span>{step.number}</span>
 
-              <div className="step">
-                <span>02</span>
-                <div>
-                  <h3>Add your channels</h3>
-                  <p>
-                    Define the social channels you plan to manage inside that
-                    workflow.
-                  </p>
-                </div>
-              </div>
-
-              <div className="step">
-                <span>03</span>
-                <div>
-                  <h3>Customize each post</h3>
-                  <p>
-                    Prepare platform-specific media, titles, descriptions,
-                    hashtags, and keywords.
-                  </p>
-                </div>
-              </div>
-
-              <div className="step">
-                <span>04</span>
-                <div>
-                  <h3>Schedule and publish</h3>
-                  <p>
-                    Organize publishing times and manage your content from a
-                    single workflow.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div>
+        <h3>{step.title}</h3>
+        <p>{step.text}</p>
+      </div>
+    </div>
+  ))}
+</div>
         </section>
 
         <section className="cta-section" id="get-started">
