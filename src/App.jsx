@@ -8,6 +8,7 @@ const platforms = [
   "Bilibili",
   "Snapchat",
   "X",
+  "Others",
 ];
 
 const features = [
