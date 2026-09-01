@@ -43,7 +43,8 @@ const features = [
     text: "Learn from content performance and use those signals to decide what to create next.",
   },
 ];
-  const workflowSteps = [
+
+const workflowSteps = [
   {
     number: "01",
     title: "Discover",
@@ -81,27 +82,31 @@ const dashboardStats = [
 
 const trends = ["AI Agents", "AI Video", "Creator Economy"];
 
-];
 const faqs = [
   {
     question: "What is FlowPost?",
     answer:
-      "FlowPost is being designed as a simple social media workflow platform for organizing content creation, customization, scheduling, and publishing from one workspace.",
+      "FlowPost is being developed as a creator workflow platform that connects the full content journey: Discover → Develop → Create → Publish → Learn. The goal is to give creators one focused workspace for moving from an opportunity or idea toward published content and learning from what they create.",
   },
   {
-    question: "Which platforms will FlowPost support?",
+    question: "Which platforms is FlowPost designed for?",
     answer:
-      "The planned platform layer includes Facebook, Instagram, YouTube, TikTok, Bilibili, Snapchat, X, and additional platforms over time. These integrations are part of the roadmap and are not yet connected in this Phase 1 landing page.",
+      "The FlowPost product direction includes Facebook, Instagram, YouTube, TikTok, Bilibili, Snapchat, X, and other platforms over time. These platform representations are part of the Phase 1 landing page and do not mean live integrations are currently available.",
   },
   {
-    question: "Will every platform have its own settings?",
+    question: "How is FlowPost being developed?",
     answer:
-      "Yes. The planned workflow is designed to allow platform-specific media, titles, descriptions, hashtags, keywords, and other publishing requirements.",
+      "FlowPost is being developed in phases. Phase 1 establishes the creator workflow and product direction. Advanced discovery, creation capabilities, publishing integrations, and analytics are future phases rather than currently implemented functionality.",
   },
   {
-    question: "Will FlowPost require a credit card?",
+    question: "Will FlowPost replace my existing creation tools?",
     answer:
-      "The basic product experience is being designed around a no-credit-card-required, free-first foundation.",
+      "No. FlowPost is being positioned as a connected creator workflow rather than a replacement for every specialized creation tool. The product direction is to help creators organize the journey from discovery and ideas through publishing and learning.",
+  },
+  {
+    question: "Is the dashboard showing real data?",
+    answer:
+      "No. The dashboard shown on this landing page is a static product representation used to communicate the intended FlowPost workflow. The numbers, trends, and next-up content are mock data.",
   },
 ];
 
@@ -153,11 +158,17 @@ function App() {
             aria-label="Primary navigation"
           >
             <button onClick={() => navigateTo("features")}>Features</button>
+
             <button onClick={() => navigateTo("how-it-works")}>
               How it works
             </button>
-            <button onClick={() => navigateTo("platforms")}>Platforms</button>
+
+            <button onClick={() => navigateTo("platforms")}>
+              Platforms
+            </button>
+
             <button onClick={() => navigateTo("faq")}>FAQ</button>
+
             <button
               className="nav-cta"
               onClick={() => navigateTo("get-started")}
@@ -178,13 +189,13 @@ function App() {
               </div>
 
               <h1>
-                Your social media,
+                From idea to published content,
                 <span> in one flow.</span>
               </h1>
 
               <p className="hero-text">
-                Create, customize, schedule, and organize your social content
-                from one simple workspace.
+                A creator workspace designed to connect discovery, ideas,
+                creation, publishing, and learning in one flow.
               </p>
 
               <div className="hero-actions">
@@ -192,7 +203,7 @@ function App() {
                   className="primary-button"
                   onClick={() => navigateTo("get-started")}
                 >
-                  Start for free
+                  Explore FlowPost
                   <span aria-hidden="true">→</span>
                 </button>
 
@@ -206,18 +217,25 @@ function App() {
 
               <div className="trust-row" aria-label="Product highlights">
                 <span>No credit card required</span>
+
                 <span className="trust-separator" aria-hidden="true">
                   •
                 </span>
+
                 <span>Simple workflow</span>
+
                 <span className="trust-separator" aria-hidden="true">
                   •
                 </span>
+
                 <span>Creator focused</span>
               </div>
             </div>
 
-            <div className="hero-dashboard" aria-label="FlowPost workspace preview">
+            <div
+              className="hero-dashboard"
+              aria-label="Static FlowPost creator workspace preview"
+            >
               <div className="dashboard-window">
                 <div className="window-bar">
                   <div className="window-dots" aria-hidden="true">
@@ -225,7 +243,11 @@ function App() {
                     <span />
                     <span />
                   </div>
-                  <span className="window-title">FlowPost Workspace</span>
+
+                  <span className="window-title">
+                    FlowPost Workspace
+                  </span>
+
                   <span className="window-status">Preview</span>
                 </div>
 
@@ -244,82 +266,114 @@ function App() {
                         <small>WORKSPACE</small>
                         <h3>Content overview</h3>
                       </div>
+
                       <span className="mini-create">+ Create</span>
                     </div>
 
                     <div className="mini-stats mini-stats-five">
-  {dashboardStats.map(([label, value]) => (
-    <div key={label}>
-      <small>{label}</small>
-      <strong>{value}</strong>
-    </div>
-  ))}
-</div>
+                      {dashboardStats.map(([label, value]) => (
+                        <div key={label}>
+                          <small>{label}</small>
+                          <strong>{value}</strong>
+                        </div>
+                      ))}
+                    </div>
 
                     <div className="mini-card">
-  <div className="mini-card-head">
-    <div>
-      <small>TRENDING NOW</small>
-      <strong>Content opportunities</strong>
-    </div>
-    <span className="badge">Preview</span>
-  </div>
+                      <div className="mini-card-head">
+                        <div>
+                          <small>TRENDING NOW</small>
+                          <strong>Content opportunities</strong>
+                        </div>
 
-  <div className="platform-list trend-list">
-    {trends.map((trend, index) => (
-      <div className="platform-item" key={trend}>
-        <span
-          className={`platform-icon icon-${index}`}
-          aria-hidden="true"
-        >
-          {index + 1}
-        </span>
-        <span>{trend}</span>
-        <span className="check" aria-hidden="true">
-          ↗
-        </span>
-      </div>
-    ))}
-  </div>
-</div>
+                        <span className="badge">Preview</span>
+                      </div>
+
+                      <div className="platform-list trend-list">
+                        {trends.map((trend, index) => (
+                          <div
+                            className="platform-item"
+                            key={trend}
+                          >
+                            <span
+                              className={`platform-icon icon-${index}`}
+                              aria-hidden="true"
+                            >
+                              {index + 1}
+                            </span>
+
+                            <span>{trend}</span>
+
+                            <span
+                              className="check"
+                              aria-hidden="true"
+                            >
+                              ↗
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
                     <div className="mini-progress next-up-card">
-  <div>
-    <small>NEXT UP</small>
-    <span>
-      Research → AI Video Script → Review → Productivity Reel
-    </span>
-  </div>
+                      <div>
+                        <small>NEXT UP</small>
 
-  <div
-    className="progress-track"
-    aria-hidden="true"
-  >
-    <span />
-  </div>
-</div>
+                        <span>
+                          Research → AI Video Script → Review →
+                          Productivity Reel
+                        </span>
+                      </div>
 
-          <div className="hero-glow hero-glow-one" aria-hidden="true" />
-          <div className="hero-glow hero-glow-two" aria-hidden="true" />
+                      <div
+                        className="progress-track"
+                        aria-hidden="true"
+                      >
+                        <span />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="hero-glow hero-glow-one"
+              aria-hidden="true"
+            />
+
+            <div
+              className="hero-glow hero-glow-two"
+              aria-hidden="true"
+            />
+          </div>
         </section>
 
         <section className="platform-strip" id="platforms">
           <div className="container">
             <div className="strip-copy">
-  <span className="section-label">PLATFORM WORKFLOW</span>
-  <p>Create once. Adapt everywhere.</p>
-  <small>
-    Platform-native versions are part of the FlowPost product direction.
-  </small>
-</div>
+              <span className="section-label">
+                PLATFORM WORKFLOW
+              </span>
+
+              <p>Create once. Adapt everywhere.</p>
+
+              <small>
+                Platform-native versions are part of the FlowPost
+                product direction.
+              </small>
+            </div>
 
             <div className="platforms">
               {platforms.map((platform) => (
                 <span key={platform}>
-                  <b aria-hidden="true">{platform.charAt(0)}</b>
+                  <b aria-hidden="true">
+                    {platform.charAt(0)}
+                  </b>
                   {platform}
                 </span>
               ))}
+
               <span>
                 <b aria-hidden="true">+</b>
                 More over time
@@ -332,21 +386,37 @@ function App() {
           <div className="container">
             <div className="section-heading">
               <span className="section-label">FEATURES</span>
-              <h2>Everything you need to keep content moving.</h2>
+
+              <h2>
+                Everything you need to keep content moving.
+              </h2>
+
               <p>
-                FlowPost brings repetitive social publishing work into a
-                clearer workflow without making the interface complicated.
+                FlowPost brings repetitive social publishing work into
+                a clearer workflow without making the interface
+                complicated.
               </p>
             </div>
 
             <div className="feature-grid">
               {features.map((feature) => (
-                <article className="feature-card" key={feature.title}>
+                <article
+                  className="feature-card"
+                  key={feature.title}
+                >
                   <div className="feature-topline">
-                    <span className="feature-number">{feature.number}</span>
-                    <span className="feature-line" aria-hidden="true" />
+                    <span className="feature-number">
+                      {feature.number}
+                    </span>
+
+                    <span
+                      className="feature-line"
+                      aria-hidden="true"
+                    />
                   </div>
+
                   <h3>{feature.title}</h3>
+
                   <p>{feature.text}</p>
                 </article>
               ))}
@@ -354,57 +424,82 @@ function App() {
           </div>
         </section>
 
-        <section className="workflow-section" id="how-it-works">
+        <section
+          className="workflow-section"
+          id="how-it-works"
+        >
           <div className="container workflow-grid">
             <div className="section-heading left">
-              <span className="section-label">HOW IT WORKS</span>
+              <span className="section-label">
+                HOW IT WORKS
+              </span>
+
               <h2>
-  From opportunity to learning,
-  in one flow.
-</h2>
+                From opportunity to learning,
+                in one flow.
+              </h2>
+
               <p>
-  FlowPost is being developed around five connected stages:
-  Discover, Develop, Create, Publish, and Learn.
-</p>
+                FlowPost is being developed around five connected
+                stages: Discover, Develop, Create, Publish, and Learn.
+              </p>
 
-              <div className="workflow-sequence" aria-hidden="true">
-  {workflowSteps.map((step, index) => (
-    <span
-      className="workflow-sequence-item"
-      key={step.title}
-    >
-      <span>{step.title}</span>
+              <div
+                className="workflow-sequence"
+                aria-hidden="true"
+              >
+                {workflowSteps.map((step, index) => (
+                  <span
+                    className="workflow-sequence-item"
+                    key={step.title}
+                  >
+                    <span>{step.title}</span>
 
-      {index < workflowSteps.length - 1 && (
-        <i aria-hidden="true">→</i>
-      )}
-    </span>
-  ))}
-</div>
+                    {index < workflowSteps.length - 1 && (
+                      <i aria-hidden="true">→</i>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
 
             <div className="steps">
-  {workflowSteps.map((step) => (
-    <div className="step" key={step.number}>
-      <span>{step.number}</span>
+              {workflowSteps.map((step) => (
+                <div
+                  className="step"
+                  key={step.number}
+                >
+                  <span>{step.number}</span>
 
-      <div>
-        <h3>{step.title}</h3>
-        <p>{step.text}</p>
-      </div>
-    </div>
-  ))}
-</div>
+                  <div>
+                    <h3>{step.title}</h3>
+
+                    <p>{step.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
-        <section className="cta-section" id="get-started">
+        <section
+          className="cta-section"
+          id="get-started"
+        >
           <div className="container">
             <div className="cta-card">
               <div>
-                <span className="section-label">FLOWPOST</span>
-                <h2>Ready to simplify your content workflow?</h2>
+                <span className="section-label">
+                  FLOWPOST
+                </span>
+
+                <h2>
+                  Ready to simplify your content workflow?
+                </h2>
+
                 <p>
-                  Start with a clean foundation designed to grow into a
-                  complete multi-platform workspace.
+                  Start with a clean foundation designed to grow
+                  into a complete multi-platform workspace.
                 </p>
               </div>
 
@@ -419,13 +514,19 @@ function App() {
           </div>
         </section>
 
-        <section className="faq-section" id="faq">
+        <section
+          className="faq-section"
+          id="faq"
+        >
           <div className="container">
             <div className="section-heading">
               <span className="section-label">FAQ</span>
+
               <h2>Simple answers.</h2>
+
               <p>
-                A few basics about what FlowPost is and what is planned next.
+                A few basics about what FlowPost is and what is
+                planned next.
               </p>
             </div>
 
@@ -434,10 +535,15 @@ function App() {
                 <details key={faq.question}>
                   <summary>
                     <span>{faq.question}</span>
-                    <span className="faq-plus" aria-hidden="true">
+
+                    <span
+                      className="faq-plus"
+                      aria-hidden="true"
+                    >
                       +
                     </span>
                   </summary>
+
                   <p>{faq.answer}</p>
                 </details>
               ))}
@@ -454,28 +560,47 @@ function App() {
               onClick={() => navigateTo("home")}
               aria-label="Go to FlowPost home"
             >
-              <span className="brand-mark" aria-hidden="true">
+              <span
+                className="brand-mark"
+                aria-hidden="true"
+              >
                 F
               </span>
+
               <span>FlowPost</span>
             </button>
+
             <p>
-              A simpler way to organize, customize, schedule, and manage your
-              social media workflow.
+              A creator workflow platform being developed to connect
+              discovery, ideas, creation, publishing, and learning.
             </p>
           </div>
 
           <div className="footer-column">
             <h4>Product</h4>
-            <button onClick={() => navigateTo("features")}>Features</button>
-            <button onClick={() => navigateTo("how-it-works")}>
+
+            <button
+              onClick={() => navigateTo("features")}
+            >
+              Features
+            </button>
+
+            <button
+              onClick={() => navigateTo("how-it-works")}
+            >
               How it works
             </button>
-            <button onClick={() => navigateTo("platforms")}>Platforms</button>
+
+            <button
+              onClick={() => navigateTo("platforms")}
+            >
+              Platforms
+            </button>
           </div>
 
           <div className="footer-column">
             <h4>Company</h4>
+
             <button type="button">About</button>
             <button type="button">Contact</button>
             <button type="button">Careers</button>
@@ -483,26 +608,55 @@ function App() {
 
           <div className="footer-column">
             <h4>Legal</h4>
-            <button type="button">Privacy Policy</button>
-            <button type="button">Terms of Service</button>
-            <button type="button">Cookie Policy</button>
+
+            <button type="button">
+              Privacy Policy
+            </button>
+
+            <button type="button">
+              Terms of Service
+            </button>
+
+            <button type="button">
+              Cookie Policy
+            </button>
           </div>
         </div>
 
         <div className="container footer-bottom">
-          <span>© 2026 FlowPost. All rights reserved.</span>
+          <span>
+            © 2026 FlowPost. All rights reserved.
+          </span>
 
-          <div className="social-links" aria-label="Social media links">
-            <button type="button" aria-label="Facebook">
+          <div
+            className="social-links"
+            aria-label="Social media links"
+          >
+            <button
+              type="button"
+              aria-label="Facebook"
+            >
               f
             </button>
-            <button type="button" aria-label="Instagram">
+
+            <button
+              type="button"
+              aria-label="Instagram"
+            >
               ◎
             </button>
-            <button type="button" aria-label="YouTube">
+
+            <button
+              type="button"
+              aria-label="YouTube"
+            >
               ▶
             </button>
-            <button type="button" aria-label="LinkedIn">
+
+            <button
+              type="button"
+              aria-label="LinkedIn"
+            >
               in
             </button>
           </div>
