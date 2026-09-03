@@ -1,4 +1,6 @@
 import { useState } from "react";
+import WorkspaceShell from "./components/WorkspaceShell";
+import Dashboard from "./pages/Dashboard";
 
 const platforms = [
   "Facebook",
@@ -123,11 +125,72 @@ function scrollTo(id) {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [activeWorkspacePage, setActiveWorkspacePage] =
+    useState("dashboard");
 
   const navigateTo = (id) => {
     scrollTo(id);
     setMenuOpen(false);
   };
+
+  const openWorkspace = () => {
+    setWorkspaceOpen(true);
+    setMenuOpen(false);
+    setActiveWorkspacePage("dashboard");
+  };
+
+  const closeWorkspace = () => {
+    setWorkspaceOpen(false);
+    setMenuOpen(false);
+  };
+
+  const handleWorkspaceNavigate = (page) => {
+    setActiveWorkspacePage(page);
+  };
+
+  if (workspaceOpen) {
+    return (
+      <WorkspaceShell
+        activePage={activeWorkspacePage}
+        onNavigate={handleWorkspaceNavigate}
+      >
+        {activeWorkspacePage === "dashboard" && <Dashboard />}
+
+        {activeWorkspacePage !== "dashboard" && (
+          <section className="workspace-page">
+            <div className="workspace-page-header">
+              <span className="section-label">
+                {activeWorkspacePage.toUpperCase()}
+              </span>
+
+              <h1>
+                {activeWorkspacePage.charAt(0).toUpperCase() +
+                  activeWorkspacePage.slice(1)}
+              </h1>
+
+              <p>
+                This FlowPost workspace module is being developed
+                as part of the next phase.
+              </p>
+
+              <button
+                className="primary-button"
+                type="button"
+                onClick={() =>
+                  setActiveWorkspacePage("dashboard")
+                }
+                style={{ marginTop: "24px" }}
+              >
+                Back to Dashboard
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </section>
+        )}
+      </WorkspaceShell>
+    );
+  }
 
   return (
     <div className="app">
@@ -207,7 +270,7 @@ function App() {
             <button
               className="nav-cta"
               type="button"
-              onClick={() => navigateTo("get-started")}
+              onClick={openWorkspace}
             >
               Get started
             </button>
@@ -250,7 +313,7 @@ function App() {
                 <button
                   className="primary-button"
                   type="button"
-                  onClick={() => navigateTo("get-started")}
+                  onClick={openWorkspace}
                 >
                   Explore FlowPost
                   <span aria-hidden="true">→</span>
@@ -654,7 +717,7 @@ function App() {
               <button
                 className="primary-button"
                 type="button"
-                onClick={() => navigateTo("home")}
+                onClick={openWorkspace}
               >
                 Explore the workflow
                 <span aria-hidden="true">
