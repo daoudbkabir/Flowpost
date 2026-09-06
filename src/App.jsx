@@ -86,6 +86,41 @@ const trends = [
   "Creator Economy",
 ];
 
+const discoverOpportunities = [
+  {
+    category: "AI",
+    title: "AI Agents for everyday workflows",
+    description:
+      "Explore practical ways creators can use AI agents for research, planning, and repetitive productivity tasks.",
+    platforms: ["YouTube", "LinkedIn", "X"],
+    signal: "High interest",
+  },
+  {
+    category: "VIDEO",
+    title: "AI video creation workflows",
+    description:
+      "Explore how creators are combining AI tools to move from an idea to a short-form video faster.",
+    platforms: ["TikTok", "Instagram", "YouTube"],
+    signal: "Rising",
+  },
+  {
+    category: "CREATOR",
+    title: "The creator economy playbook",
+    description:
+      "Break down practical systems creators can use to turn content consistency into a sustainable workflow.",
+    platforms: ["Instagram", "LinkedIn", "YouTube"],
+    signal: "Growing",
+  },
+  {
+    category: "PRODUCTIVITY",
+    title: "One idea, multiple content formats",
+    description:
+      "Show how one research-backed idea can become a reel, carousel, short, thread, and long-form piece.",
+    platforms: ["Instagram", "TikTok", "X", "YouTube"],
+    signal: "Strong",
+  },
+];
+
 const faqs = [
   {
     question: "What is FlowPost?",
@@ -124,6 +159,7 @@ function scrollTo(id) {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [workspaceView, setWorkspaceView] = useState("Dashboard");
 
   const navigateTo = (id) => {
     scrollTo(id);
@@ -132,7 +168,16 @@ function App() {
 
   const openWorkspace = () => {
     setWorkspaceOpen(true);
+    setWorkspaceView("Dashboard");
     setMenuOpen(false);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const openWorkspaceView = (view) => {
+    setWorkspaceView(view);
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -157,186 +202,195 @@ function App() {
               <span>FlowPost</span>
             </div>
 
-            <nav
-              className="workspace-nav"
-              aria-label="Workspace navigation"
-            >
-              <button
-                className="workspace-nav-item active"
-                type="button"
-              >
-                <span aria-hidden="true">⌂</span>
-                Dashboard
-              </button>
-
-              <button
-                className="workspace-nav-item"
-                type="button"
-              >
-                <span aria-hidden="true">◫</span>
-                Discover
-              </button>
-
-              <button
-                className="workspace-nav-item"
-                type="button"
-              >
-                <span aria-hidden="true">✦</span>
-                Ideas
-              </button>
-
-              <button
-                className="workspace-nav-item"
-                type="button"
-              >
-                <span aria-hidden="true">✎</span>
-                Create
-              </button>
-
-              <button
-                className="workspace-nav-item"
-                type="button"
-              >
-                <span aria-hidden="true">◷</span>
-                Publish
-              </button>
-
-              <button
-                className="workspace-nav-item"
-                type="button"
-              >
-                <span aria-hidden="true">↗</span>
-                Analytics
-              </button>
+            <nav className="workspace-nav" aria-label="Workspace navigation">
+              {[
+                ["Dashboard", "⌂"],
+                ["Discover", "◫"],
+                ["Ideas", "✦"],
+                ["Create", "✎"],
+                ["Publish", "◷"],
+                ["Analytics", "↗"],
+              ].map(([label, icon]) => (
+                <button
+                  className={`workspace-nav-item ${workspaceView === label ? "active" : ""}`}
+                  type="button"
+                  key={label}
+                  onClick={() => openWorkspaceView(label)}
+                >
+                  <span aria-hidden="true">{icon}</span>
+                  {label}
+                </button>
+              ))}
             </nav>
 
             <div className="workspace-sidebar-bottom">
               <button
-                className="workspace-nav-item"
+                className={`workspace-nav-item ${workspaceView === "Settings" ? "active" : ""}`}
                 type="button"
+                onClick={() => openWorkspaceView("Settings")}
               >
                 <span aria-hidden="true">⚙</span>
                 Settings
               </button>
 
-              <button
-                className="workspace-back"
-                type="button"
-                onClick={closeWorkspace}
-              >
+              <button className="workspace-back" type="button" onClick={closeWorkspace}>
                 ← Back to FlowPost
               </button>
             </div>
           </aside>
 
           <main className="workspace-main">
-            <header className="workspace-header">
-              <div>
-                <span className="section-label">
-                  WORKSPACE
-                </span>
+            {workspaceView === "Dashboard" && (
+              <>
+                <header className="workspace-header">
+                  <div>
+                    <span className="section-label">WORKSPACE</span>
+                    <h1>Content overview</h1>
+                    <p>Your creator workflow, from discovery to publishing.</p>
+                  </div>
 
-                <h1>Content overview</h1>
+                  <button
+                    className="primary-button"
+                    type="button"
+                    onClick={() => openWorkspaceView("Create")}
+                  >
+                    + Create
+                  </button>
+                </header>
+
+                <div className="workspace-stats">
+                  {dashboardStats.map(([label, value]) => (
+                    <div className="workspace-stat-card" key={label}>
+                      <span>{label}</span>
+                      <strong>{value}</strong>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="workspace-grid">
+                  <section className="workspace-card">
+                    <div className="workspace-card-header">
+                      <div>
+                        <span className="section-label">TRENDING NOW</span>
+                        <h2>Content opportunities</h2>
+                      </div>
+                      <span className="badge">Preview</span>
+                    </div>
+
+                    <div className="workspace-trends">
+                      {trends.map((trend, index) => (
+                        <button
+                          className="workspace-trend"
+                          type="button"
+                          key={trend}
+                          onClick={() => openWorkspaceView("Discover")}
+                        >
+                          <span className="workspace-trend-number">0{index + 1}</span>
+                          <span>{trend}</span>
+                          <span aria-hidden="true">→</span>
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+
+                  <section className="workspace-card">
+                    <div className="workspace-card-header">
+                      <div>
+                        <span className="section-label">NEXT UP</span>
+                        <h2>Your content workflow</h2>
+                      </div>
+                    </div>
+
+                    <div className="workspace-flow">
+                      <span>Research</span>
+                      <i aria-hidden="true">→</i>
+                      <span>AI Video Script</span>
+                      <i aria-hidden="true">→</i>
+                      <span>Review</span>
+                      <i aria-hidden="true">→</i>
+                      <span>Publish</span>
+                    </div>
+                  </section>
+                </div>
+              </>
+            )}
+
+            {workspaceView === "Discover" && (
+              <>
+                <header className="workspace-header">
+                  <div>
+                    <span className="section-label">DISCOVER</span>
+                    <h1>Content opportunities</h1>
+                    <p>Find topics and signals worth developing before you start creating.</p>
+                  </div>
+                  <span className="badge">Phase 1 Preview</span>
+                </header>
+
+                <section className="workspace-card workspace-discover-intro">
+                  <div className="workspace-card-header">
+                    <div>
+                      <span className="section-label">OPPORTUNITY FEED</span>
+                      <h2>What could you create next?</h2>
+                    </div>
+                  </div>
+
+                  <p>
+                    These are illustrative opportunities for the FlowPost Phase 1
+                    experience. They are not live trend data or external platform metrics.
+                  </p>
+                </section>
+
+                <div className="workspace-discover-grid">
+                  {discoverOpportunities.map((opportunity) => (
+                    <article className="workspace-card workspace-opportunity" key={opportunity.title}>
+                      <div className="workspace-opportunity-top">
+                        <span className="section-label">{opportunity.category}</span>
+                        <span className="workspace-signal">{opportunity.signal}</span>
+                      </div>
+
+                      <h2>{opportunity.title}</h2>
+                      <p>{opportunity.description}</p>
+
+                      <div className="workspace-platform-tags">
+                        {opportunity.platforms.map((platform) => (
+                          <span key={platform}>{platform}</span>
+                        ))}
+                      </div>
+
+                      <button
+                        className="secondary-button workspace-save-button"
+                        type="button"
+                        onClick={() => openWorkspaceView("Ideas")}
+                      >
+                        Save to Ideas
+                        <span aria-hidden="true">→</span>
+                      </button>
+                    </article>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {workspaceView !== "Dashboard" && workspaceView !== "Discover" && (
+              <section className="workspace-empty">
+                <span className="section-label">{workspaceView.toUpperCase()}</span>
+
+                <h1>
+                  {workspaceView === "Ideas" && "Ideas workspace"}
+                  {workspaceView === "Create" && "Create workspace"}
+                  {workspaceView === "Publish" && "Publishing workspace"}
+                  {workspaceView === "Analytics" && "Analytics & learning"}
+                  {workspaceView === "Settings" && "Workspace settings"}
+                </h1>
 
                 <p>
-                  Your creator workflow, from discovery
-                  to publishing.
+                  This section is part of the FlowPost product direction and will be
+                  developed in the next phase.
                 </p>
-              </div>
 
-              <button
-                className="primary-button"
-                type="button"
-              >
-                + Create
-              </button>
-            </header>
-
-            <div className="workspace-stats">
-              {dashboardStats.map(
-                ([label, value]) => (
-                  <div
-                    className="workspace-stat-card"
-                    key={label}
-                  >
-                    <span>{label}</span>
-
-                    <strong>{value}</strong>
-                  </div>
-                )
-              )}
-            </div>
-
-            <div className="workspace-grid">
-              <section className="workspace-card">
-                <div className="workspace-card-header">
-                  <div>
-                    <span className="section-label">
-                      TRENDING NOW
-                    </span>
-
-                    <h2>
-                      Content opportunities
-                    </h2>
-                  </div>
-
-                  <span className="badge">
-                    Preview
-                  </span>
-                </div>
-
-                <div className="workspace-trends">
-                  {trends.map(
-                    (trend, index) => (
-                      <div
-                        className="workspace-trend"
-                        key={trend}
-                      >
-                        <span className="workspace-trend-number">
-                          0{index + 1}
-                        </span>
-
-                        <span>{trend}</span>
-
-                        <span aria-hidden="true">
-                          →
-                        </span>
-                      </div>
-                    )
-                  )}
-                </div>
+                <span className="badge">Coming next</span>
               </section>
-
-              <section className="workspace-card">
-                <div className="workspace-card-header">
-                  <div>
-                    <span className="section-label">
-                      NEXT UP
-                    </span>
-
-                    <h2>
-                      Your content workflow
-                    </h2>
-                  </div>
-                </div>
-
-                <div className="workspace-flow">
-                  <span>Research</span>
-
-                  <i aria-hidden="true">→</i>
-
-                  <span>AI Video Script</span>
-
-                  <i aria-hidden="true">→</i>
-
-                  <span>Review</span>
-
-                  <i aria-hidden="true">→</i>
-
-                  <span>Publish</span>
-                </div>
-              </section>
-            </div>
+            )}
           </main>
         </section>
       ) : (
