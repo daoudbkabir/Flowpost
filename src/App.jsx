@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const platforms = [
   "Facebook",
@@ -160,6 +160,25 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [workspaceView, setWorkspaceView] = useState("Dashboard");
+  const [savedIdeas, setSavedIdeas] = useState(() => {
+    try {
+      const storedIdeas = window.localStorage.getItem("flowpost-saved-ideas");
+      return storedIdeas ? JSON.parse(storedIdeas) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        "flowpost-saved-ideas",
+        JSON.stringify(savedIdeas)
+      );
+    } catch {
+      // Local storage may be unavailable in some browser environments.
+    }
+  }, [savedIdeas]);
 
   const navigateTo = (id) => {
     scrollTo(id);
@@ -190,6 +209,31 @@ function App() {
       top: 0,
       behavior: "smooth",
     });
+  };
+
+  const saveIdea = (opportunity) => {
+    setSavedIdeas((currentIdeas) => {
+      if (currentIdeas.some((idea) => idea.title === opportunity.title)) {
+        return currentIdeas;
+      }
+
+      return [
+        ...currentIdeas,
+        {
+          ...opportunity,
+          id: `${opportunity.category}-${opportunity.title}`,
+          status: "Saved",
+        },
+      ];
+    });
+
+    openWorkspaceView("Ideas");
+  };
+
+  const removeIdea = (ideaId) => {
+    setSavedIdeas((currentIdeas) =>
+      currentIdeas.filter((idea) => idea.id !== ideaId)
+    );
   };
 
   return (
@@ -262,7 +306,11 @@ function App() {
                   {dashboardStats.map(([label, value]) => (
                     <div className="workspace-stat-card" key={label}>
                       <span>{label}</span>
-                      <strong>{value}</strong>
+                      <strong>
+                        {label === "Ideas"
+                          ? Number(value) + savedIdeas.length
+                          : value}
+                      </strong>
                     </div>
                   ))}
                 </div>
@@ -360,9 +408,13 @@ function App() {
                       <button
                         className="secondary-button workspace-save-button"
                         type="button"
-                        onClick={() => openWorkspaceView("Ideas")}
+                        onClick={() => saveIdea(opportunity)}
                       >
-                        Save to Ideas
+                        {savedIdeas.some(
+                          (idea) => idea.title === opportunity.title
+                        )
+                          ? "Saved to Ideas"
+                          : "Save to Ideas"}
                         <span aria-hidden="true">→</span>
                       </button>
                     </article>
@@ -371,26 +423,99 @@ function App() {
               </>
             )}
 
-            {workspaceView !== "Dashboard" && workspaceView !== "Discover" && (
-              <section className="workspace-empty">
-                <span className="section-label">{workspaceView.toUpperCase()}</span>
+            {workspaceView === "Ideas" && (
+              <>
+                <header className="workspace-header">
+                  <div>
+                    <span className="section-label">IDEAS</span>
+                    <h1>Saved ideas</h1>
+                    <p>
+                      Keep promising opportunities in one place and develop them when
+                      you are ready.
+                    </p>
+                  </div>
 
-                <h1>
-                  {workspaceView === "Ideas" && "Ideas workspace"}
-                  {workspaceView === "Create" && "Create workspace"}
-                  {workspaceView === "Publish" && "Publishing workspace"}
-                  {workspaceView === "Analytics" && "Analytics & learning"}
-                  {workspaceView === "Settings" && "Workspace settings"}
-                </h1>
+                  <span className="badge">
+                    {savedIdeas.length} saved
+                  </span>
+                </header>
 
-                <p>
-                  This section is part of the FlowPost product direction and will be
-                  developed in the next phase.
-                </p>
+                {savedIdeas.length === 0 ? (
+                  <section className="workspace-empty">
+                    <span className="section-label">IDEAS LIBRARY</span>
+                    <h1>No saved ideas yet</h1>
+                    <p>
+                      Go to Discover and save an opportunity you want to explore.
+                      Your saved ideas will stay here when you return.
+                    </p>
+                    <button
+                      className="primary-button"
+                      type="button"
+                      onClick={() => openWorkspaceView("Discover")}
+                    >
+                      Explore Discover
+                      <span aria-hidden="true">→</span>
+                    </button>
+                  </section>
+                ) : (
+                  <div className="workspace-discover-grid">
+                    {savedIdeas.map((idea) => (
+                      <article
+                        className="workspace-card workspace-opportunity"
+                        key={idea.id}
+                      >
+                        <div className="workspace-opportunity-top">
+                          <span className="section-label">{idea.category}</span>
+                          <span className="workspace-signal">{idea.status}</span>
+                        </div>
 
-                <span className="badge">Coming next</span>
-              </section>
+                        <h2>{idea.title}</h2>
+                        <p>{idea.description}</p>
+
+                        <div className="workspace-platform-tags">
+                          {idea.platforms.map((platform) => (
+                            <span key={platform}>{platform}</span>
+                          ))}
+                        </div>
+
+                        <button
+                          className="secondary-button workspace-save-button"
+                          type="button"
+                          onClick={() => removeIdea(idea.id)}
+                        >
+                          Remove from Ideas
+                          <span aria-hidden="true">×</span>
+                        </button>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
+
+            {workspaceView !== "Dashboard" &&
+              workspaceView !== "Discover" &&
+              workspaceView !== "Ideas" && (
+                <section className="workspace-empty">
+                  <span className="section-label">
+                    {workspaceView.toUpperCase()}
+                  </span>
+
+                  <h1>
+                    {workspaceView === "Create" && "Create workspace"}
+                    {workspaceView === "Publish" && "Publishing workspace"}
+                    {workspaceView === "Analytics" && "Analytics & learning"}
+                    {workspaceView === "Settings" && "Workspace settings"}
+                  </h1>
+
+                  <p>
+                    This section is part of the FlowPost product direction and will be
+                    developed in the next phase.
+                  </p>
+
+                  <span className="badge">Coming next</span>
+                </section>
+              )}
           </main>
         </section>
       ) : (
