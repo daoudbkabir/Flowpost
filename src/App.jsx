@@ -168,17 +168,16 @@ function App() {
       return [];
     }
   });
-
   const [researchData, setResearchData] = useState(() => {
     try {
-      const storedResearch = window.localStorage.getItem("flowpost-research-data");
+      const storedResearch = window.localStorage.getItem("flowpost-research");
       return storedResearch ? JSON.parse(storedResearch) : {};
     } catch {
       return {};
     }
   });
 
-  const [selectedResearchIdeaId, setSelectedResearchIdeaId] = useState(null);
+  const [activeResearchId, setActiveResearchId] = useState(null);
 
   useEffect(() => {
     try {
@@ -190,27 +189,16 @@ function App() {
       // Local storage may be unavailable in some browser environments.
     }
   }, [savedIdeas]);
-
   useEffect(() => {
     try {
       window.localStorage.setItem(
-        "flowpost-research-data",
+        "flowpost-research",
         JSON.stringify(researchData)
       );
     } catch {
       // Local storage may be unavailable in some browser environments.
     }
   }, [researchData]);
-
-  useEffect(() => {
-    if (
-      workspaceView === "Research" &&
-      savedIdeas.length > 0 &&
-      !savedIdeas.some((idea) => idea.id === selectedResearchIdeaId)
-    ) {
-      setSelectedResearchIdeaId(savedIdeas[0].id);
-    }
-  }, [workspaceView, savedIdeas, selectedResearchIdeaId]);
 
   const navigateTo = (id) => {
     scrollTo(id);
@@ -269,7 +257,20 @@ function App() {
   };
 
   const startResearch = (idea) => {
-    setSelectedResearchIdeaId(idea.id);
+    setResearchData((currentResearch) => ({
+      ...currentResearch,
+      [idea.id]: {
+        ...(currentResearch[idea.id] || {}),
+        ideaId: idea.id,
+        title: idea.title,
+        category: idea.category,
+        notes: currentResearch[idea.id]?.notes || "",
+        findings: currentResearch[idea.id]?.findings || "",
+        sources: currentResearch[idea.id]?.sources || "",
+        updatedAt: new Date().toISOString(),
+      },
+    }));
+
     setSavedIdeas((currentIdeas) =>
       currentIdeas.map((currentIdea) =>
         currentIdea.id === idea.id
@@ -277,20 +278,44 @@ function App() {
           : currentIdea
       )
     );
+
+    setActiveResearchId(idea.id);
     openWorkspaceView("Research");
   };
 
-  const updateResearch = (ideaId, field, value) => {
-    setResearchData((currentData) => ({
-      ...currentData,
-      [ideaId]: {
-        notes: "",
-        findings: "",
-        sources: "",
-        ...(currentData[ideaId] || {}),
+  const updateResearchField = (field, value) => {
+    if (!activeResearchId) return;
+
+    setResearchData((currentResearch) => ({
+      ...currentResearch,
+      [activeResearchId]: {
+        ...(currentResearch[activeResearchId] || {}),
         [field]: value,
+        updatedAt: new Date().toISOString(),
       },
     }));
+  };
+
+  const saveResearch = () => {
+    if (!activeResearchId) return;
+
+    setSavedIdeas((currentIdeas) =>
+      currentIdeas.map((currentIdea) =>
+        currentIdea.id === activeResearchId
+          ? { ...currentIdea, status: "Researching" }
+          : currentIdea
+      )
+    );
+  };
+
+  const openResearchForIdea = (idea) => {
+    if (!researchData[idea.id]) {
+      startResearch(idea);
+      return;
+    }
+
+    setActiveResearchId(idea.id);
+    openWorkspaceView("Research");
   };
 
   return (
@@ -536,13 +561,7 @@ function App() {
                           ))}
                         </div>
 
-                        <div
-                          style={{
-                            display: "flex",
-                            gap: "10px",
-                            flexWrap: "wrap",
-                          }}
-                        >
+                        <div className="workspace-opportunity-actions">
                           <button
                             className="primary-button"
                             type="button"
@@ -575,239 +594,138 @@ function App() {
                     <span className="section-label">RESEARCH</span>
                     <h1>Develop your idea</h1>
                     <p>
-                      Turn a saved opportunity into a clearer, research-backed
-                      direction before you start creating.
+                      Turn a saved opportunity into a research-backed content direction.
                     </p>
                   </div>
 
                   <span className="badge">
-                    {savedIdeas.length} saved ideas
+                    {activeResearchId && researchData[activeResearchId]
+                      ? "Researching"
+                      : "Start with an idea"}
                   </span>
                 </header>
 
-                {savedIdeas.length === 0 ? (
+                {!activeResearchId || !researchData[activeResearchId] ? (
                   <section className="workspace-empty">
-                    <span className="section-label">RESEARCH WORKSPACE</span>
-                    <h1>Save an idea first</h1>
+                    <span className="section-label">RESEARCH LIBRARY</span>
+                    <h1>Select an idea to research</h1>
                     <p>
-                      Go to Discover, save an opportunity, and then return here
-                      to develop it with notes, findings, and sources.
+                      Start from a saved idea in your Ideas workspace and build the
+                      research behind it.
                     </p>
                     <button
                       className="primary-button"
                       type="button"
-                      onClick={() => openWorkspaceView("Discover")}
+                      onClick={() => openWorkspaceView("Ideas")}
                     >
-                      Explore Discover
+                      Open Ideas
                       <span aria-hidden="true">→</span>
                     </button>
                   </section>
                 ) : (
-                  <>
-                    <section className="workspace-card">
+                  <div className="workspace-research">
+                    <section className="workspace-card workspace-research-brief">
                       <div className="workspace-card-header">
                         <div>
-                          <span className="section-label">SELECT IDEA</span>
-                          <h2>What are you researching?</h2>
+                          <span className="section-label">
+                            {researchData[activeResearchId].category}
+                          </span>
+                          <h2>{researchData[activeResearchId].title}</h2>
                         </div>
+                        <span className="badge">Saved idea</span>
                       </div>
 
-                      <div className="workspace-platform-tags">
-                        {savedIdeas.map((idea) => (
-                          <button
-                            className="secondary-button"
-                            type="button"
-                            key={idea.id}
-                            onClick={() => setSelectedResearchIdeaId(idea.id)}
-                            style={{
-                              border:
-                                selectedResearchIdeaId === idea.id
-                                  ? "1px solid #111"
-                                  : undefined,
-                              background:
-                                selectedResearchIdeaId === idea.id
-                                  ? "#111"
-                                  : undefined,
-                              color:
-                                selectedResearchIdeaId === idea.id
-                                  ? "#fff"
-                                  : undefined,
-                            }}
-                          >
-                            {idea.title}
-                          </button>
-                        ))}
-                      </div>
+                      <p>
+                        Build enough context to decide what the content should say,
+                        who it should help, and why it is worth creating.
+                      </p>
                     </section>
 
-                    {(() => {
-                      const activeIdea =
-                        savedIdeas.find(
-                          (idea) => idea.id === selectedResearchIdeaId
-                        ) || savedIdeas[0];
-                      const activeResearch =
-                        researchData[activeIdea.id] || {
-                          notes: "",
-                          findings: "",
-                          sources: "",
-                        };
-
-                      return (
-                        <div className="workspace-discover-grid">
-                          <section className="workspace-card">
-                            <div className="workspace-card-header">
-                              <div>
-                                <span className="section-label">IDEA</span>
-                                <h2>{activeIdea.title}</h2>
-                              </div>
-                              <span className="workspace-signal">
-                                {activeIdea.status}
-                              </span>
-                            </div>
-
-                            <p>{activeIdea.description}</p>
-
-                            <div className="workspace-platform-tags">
-                              {activeIdea.platforms.map((platform) => (
-                                <span key={platform}>{platform}</span>
-                              ))}
-                            </div>
-                          </section>
-
-                          <section className="workspace-card">
-                            <div className="workspace-card-header">
-                              <div>
-                                <span className="section-label">RESEARCH NOTES</span>
-                                <h2>What are you learning?</h2>
-                              </div>
-                            </div>
-
-                            <textarea
-                              value={activeResearch.notes}
-                              onChange={(event) =>
-                                updateResearch(
-                                  activeIdea.id,
-                                  "notes",
-                                  event.target.value
-                                )
-                              }
-                              placeholder="Add observations, questions, audience insights, examples, or research notes..."
-                              rows={8}
-                              style={{
-                                width: "100%",
-                                minHeight: "180px",
-                                padding: "14px 16px",
-                                border: "1px solid #d9d9d9",
-                                borderRadius: "10px",
-                                background: "#fff",
-                                color: "#111",
-                                font: "inherit",
-                                lineHeight: 1.6,
-                                resize: "vertical",
-                                boxSizing: "border-box",
-                              }}
-                            />
-                          </section>
-
-                          <section className="workspace-card">
-                            <div className="workspace-card-header">
-                              <div>
-                                <span className="section-label">KEY FINDINGS</span>
-                                <h2>What matters most?</h2>
-                              </div>
-                            </div>
-
-                            <textarea
-                              value={activeResearch.findings}
-                              onChange={(event) =>
-                                updateResearch(
-                                  activeIdea.id,
-                                  "findings",
-                                  event.target.value
-                                )
-                              }
-                              placeholder="Summarize the strongest findings or insights you want your content to communicate..."
-                              rows={7}
-                              style={{
-                                width: "100%",
-                                minHeight: "160px",
-                                padding: "14px 16px",
-                                border: "1px solid #d9d9d9",
-                                borderRadius: "10px",
-                                background: "#fff",
-                                color: "#111",
-                                font: "inherit",
-                                lineHeight: 1.6,
-                                resize: "vertical",
-                                boxSizing: "border-box",
-                              }}
-                            />
-                          </section>
-
-                          <section className="workspace-card">
-                            <div className="workspace-card-header">
-                              <div>
-                                <span className="section-label">SOURCES</span>
-                                <h2>Keep your references</h2>
-                              </div>
-                            </div>
-
-                            <textarea
-                              value={activeResearch.sources}
-                              onChange={(event) =>
-                                updateResearch(
-                                  activeIdea.id,
-                                  "sources",
-                                  event.target.value
-                                )
-                              }
-                              placeholder="Add URLs, reports, articles, studies, or other references you want to keep with this idea..."
-                              rows={7}
-                              style={{
-                                width: "100%",
-                                minHeight: "160px",
-                                padding: "14px 16px",
-                                border: "1px solid #d9d9d9",
-                                borderRadius: "10px",
-                                background: "#fff",
-                                color: "#111",
-                                font: "inherit",
-                                lineHeight: 1.6,
-                                resize: "vertical",
-                                boxSizing: "border-box",
-                              }}
-                            />
-
-                            <div
-                              style={{
-                                display: "flex",
-                                gap: "10px",
-                                flexWrap: "wrap",
-                                marginTop: "18px",
-                              }}
-                            >
-                              <button
-                                className="primary-button"
-                                type="button"
-                                onClick={() => openWorkspaceView("Create")}
-                              >
-                                Move to Create
-                                <span aria-hidden="true">→</span>
-                              </button>
-
-                              <button
-                                className="secondary-button"
-                                type="button"
-                                onClick={() => openWorkspaceView("Ideas")}
-                              >
-                                Back to Ideas
-                              </button>
-                            </div>
-                          </section>
+                    <div className="workspace-research-grid">
+                      <section className="workspace-card workspace-research-panel">
+                        <div className="workspace-card-header">
+                          <div>
+                            <span className="section-label">NOTES</span>
+                            <h2>Research notes</h2>
+                          </div>
                         </div>
-                      );
-                    })()}
-                  </>
+
+                        <textarea
+                          value={researchData[activeResearchId].notes || ""}
+                          onChange={(event) =>
+                            updateResearchField("notes", event.target.value)
+                          }
+                          placeholder="Capture context, questions, audience needs, competitors, examples, or useful observations..."
+                          rows={9}
+                        />
+                      </section>
+
+                      <section className="workspace-card workspace-research-panel">
+                        <div className="workspace-card-header">
+                          <div>
+                            <span className="section-label">FINDINGS</span>
+                            <h2>Key findings</h2>
+                          </div>
+                        </div>
+
+                        <textarea
+                          value={researchData[activeResearchId].findings || ""}
+                          onChange={(event) =>
+                            updateResearchField("findings", event.target.value)
+                          }
+                          placeholder="Summarize the strongest facts, patterns, insights, or angles you discovered..."
+                          rows={9}
+                        />
+                      </section>
+                    </div>
+
+                    <section className="workspace-card workspace-research-panel">
+                      <div className="workspace-card-header">
+                        <div>
+                          <span className="section-label">SOURCES</span>
+                          <h2>Sources & references</h2>
+                        </div>
+                        <span className="badge">Add your references</span>
+                      </div>
+
+                      <textarea
+                        value={researchData[activeResearchId].sources || ""}
+                        onChange={(event) =>
+                          updateResearchField("sources", event.target.value)
+                        }
+                        placeholder="Paste source URLs, reports, articles, studies, or other references used for your research..."
+                        rows={6}
+                      />
+
+                      <div className="workspace-research-actions">
+                        <button
+                          className="secondary-button"
+                          type="button"
+                          onClick={() => openWorkspaceView("Ideas")}
+                        >
+                          ← Back to Ideas
+                        </button>
+
+                        <button
+                          className="primary-button"
+                          type="button"
+                          onClick={saveResearch}
+                        >
+                          Save Research
+                          <span aria-hidden="true">✓</span>
+                        </button>
+
+                        <button
+                          className="primary-button"
+                          type="button"
+                          onClick={() => openWorkspaceView("Create")}
+                        >
+                          Move to Create
+                          <span aria-hidden="true">→</span>
+                        </button>
+                      </div>
+                    </section>
+                  </div>
                 )}
               </>
             )}
