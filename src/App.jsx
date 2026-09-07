@@ -178,6 +178,15 @@ function App() {
   });
 
   const [activeResearchId, setActiveResearchId] = useState(null);
+  const [createData, setCreateData] = useState(() => {
+    try {
+      const storedCreate = window.localStorage.getItem("flowpost-create");
+      return storedCreate ? JSON.parse(storedCreate) : {};
+    } catch {
+      return {};
+    }
+  });
+  const [activeCreateId, setActiveCreateId] = useState(null);
 
   useEffect(() => {
     try {
@@ -199,6 +208,17 @@ function App() {
       // Local storage may be unavailable in some browser environments.
     }
   }, [researchData]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        "flowpost-create",
+        JSON.stringify(createData)
+      );
+    } catch {
+      // Local storage may be unavailable in some browser environments.
+    }
+  }, [createData]);
 
   const navigateTo = (id) => {
     scrollTo(id);
@@ -306,6 +326,75 @@ function App() {
           : currentIdea
       )
     );
+  };
+
+  const openCreateForResearch = (researchId) => {
+    const research = researchData[researchId];
+    if (!research) {
+      openWorkspaceView("Research");
+      return;
+    }
+
+    setCreateData((currentCreate) => ({
+      ...currentCreate,
+      [researchId]: {
+        ...(currentCreate[researchId] || {}),
+        ideaId: researchId,
+        title: currentCreate[researchId]?.title || research.title,
+        format: currentCreate[researchId]?.format || "Short-form video",
+        platform: currentCreate[researchId]?.platform || "Instagram",
+        brief: currentCreate[researchId]?.brief || research.findings || "",
+        hook: currentCreate[researchId]?.hook || "",
+        script: currentCreate[researchId]?.script || "",
+        cta: currentCreate[researchId]?.cta || "",
+        status: currentCreate[researchId]?.status || "Draft",
+        updatedAt: new Date().toISOString(),
+      },
+    }));
+
+    setActiveCreateId(researchId);
+    openWorkspaceView("Create");
+  };
+
+  const updateCreateField = (field, value) => {
+    if (!activeCreateId) return;
+
+    setCreateData((currentCreate) => ({
+      ...currentCreate,
+      [activeCreateId]: {
+        ...(currentCreate[activeCreateId] || {}),
+        [field]: value,
+        updatedAt: new Date().toISOString(),
+      },
+    }));
+  };
+
+  const saveCreateDraft = () => {
+    if (!activeCreateId) return;
+
+    setCreateData((currentCreate) => ({
+      ...currentCreate,
+      [activeCreateId]: {
+        ...(currentCreate[activeCreateId] || {}),
+        status: "Draft saved",
+        updatedAt: new Date().toISOString(),
+      },
+    }));
+  };
+
+  const openCreateFromResearch = () => {
+    if (activeResearchId) {
+      openCreateForResearch(activeResearchId);
+      return;
+    }
+
+    const firstResearchId = Object.keys(researchData)[0];
+    if (firstResearchId) {
+      openCreateForResearch(firstResearchId);
+      return;
+    }
+
+    openWorkspaceView("Ideas");
   };
 
   const openResearchForIdea = (idea) => {
@@ -730,17 +819,191 @@ function App() {
               </>
             )}
 
+            {workspaceView === "Create" && (
+              <>
+                <header className="workspace-header">
+                  <div>
+                    <span className="section-label">CREATE</span>
+                    <h1>Turn your research into content</h1>
+                    <p>Build a focused draft from the idea and research you have already developed.</p>
+                  </div>
+
+                  <span className="badge">{activeCreateId && createData[activeCreateId]?.status ? createData[activeCreateId].status : "Draft"}</span>
+                </header>
+
+                {!activeCreateId || !createData[activeCreateId] ? (
+                  <section className="workspace-empty">
+                    <span className="section-label">CONTENT BUILDER</span>
+                    <h1>Start from researched ideas</h1>
+                    <p>Choose a researched idea first, then turn it into a platform-ready content draft.</p>
+                    <button
+                      className="primary-button"
+                      type="button"
+                      onClick={() => openWorkspaceView("Research")}
+                    >
+                      Open Research
+                      <span aria-hidden="true">→</span>
+                    </button>
+                  </section>
+                ) : (
+                  <div className="workspace-create">
+                    <section className="workspace-card workspace-create-brief">
+                      <div className="workspace-card-header">
+                        <div>
+                          <span className="section-label">CONTENT BRIEF</span>
+                          <h2>{createData[activeCreateId].title}</h2>
+                        </div>
+                        <span className="badge">Research connected</span>
+                      </div>
+                      <p>Use the research as the source of truth for your content angle, audience need, and key message.</p>
+                    </section>
+
+                    <div className="workspace-create-grid">
+                      <section className="workspace-card workspace-create-panel">
+                        <div className="workspace-card-header">
+                          <div>
+                            <span className="section-label">SETUP</span>
+                            <h2>Content setup</h2>
+                          </div>
+                        </div>
+
+                        <div className="workspace-form-grid">
+                          <label>
+                            <span>Title</span>
+                            <input
+                              value={createData[activeCreateId].title || ""}
+                              onChange={(event) => updateCreateField("title", event.target.value)}
+                              placeholder="Give your content a working title"
+                            />
+                          </label>
+
+                          <label>
+                            <span>Format</span>
+                            <select
+                              value={createData[activeCreateId].format || "Short-form video"}
+                              onChange={(event) => updateCreateField("format", event.target.value)}
+                            >
+                              <option>Short-form video</option>
+                              <option>Carousel</option>
+                              <option>Social post</option>
+                              <option>Thread</option>
+                              <option>Long-form video</option>
+                            </select>
+                          </label>
+
+                          <label>
+                            <span>Platform</span>
+                            <select
+                              value={createData[activeCreateId].platform || "Instagram"}
+                              onChange={(event) => updateCreateField("platform", event.target.value)}
+                            >
+                              {platforms.filter((platform) => platform !== "Others").map((platform) => (
+                                <option key={platform}>{platform}</option>
+                              ))}
+                            </select>
+                          </label>
+                        </div>
+                      </section>
+
+                      <section className="workspace-card workspace-create-panel">
+                        <div className="workspace-card-header">
+                          <div>
+                            <span className="section-label">BRIEF</span>
+                            <h2>Content direction</h2>
+                          </div>
+                        </div>
+
+                        <textarea
+                          value={createData[activeCreateId].brief || ""}
+                          onChange={(event) => updateCreateField("brief", event.target.value)}
+                          placeholder="What should this content explain, show, or help the audience do?"
+                          rows={8}
+                        />
+                      </section>
+                    </div>
+
+                    <section className="workspace-card workspace-create-panel">
+                      <div className="workspace-card-header">
+                        <div>
+                          <span className="section-label">DRAFT</span>
+                          <h2>Build the content</h2>
+                        </div>
+                      </div>
+
+                      <div className="workspace-create-stack">
+                        <label>
+                          <span>Hook</span>
+                          <input
+                            value={createData[activeCreateId].hook || ""}
+                            onChange={(event) => updateCreateField("hook", event.target.value)}
+                            placeholder="Write the opening line that earns attention"
+                          />
+                        </label>
+
+                        <label>
+                          <span>Script / Caption</span>
+                          <textarea
+                            value={createData[activeCreateId].script || ""}
+                            onChange={(event) => updateCreateField("script", event.target.value)}
+                            placeholder="Develop the main content here..."
+                            rows={12}
+                          />
+                        </label>
+
+                        <label>
+                          <span>Call to action</span>
+                          <input
+                            value={createData[activeCreateId].cta || ""}
+                            onChange={(event) => updateCreateField("cta", event.target.value)}
+                            placeholder="What should the audience do next?"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="workspace-create-actions">
+                        <button
+                          className="secondary-button"
+                          type="button"
+                          onClick={() => openWorkspaceView("Research")}
+                        >
+                          ← Back to Research
+                        </button>
+
+                        <button
+                          className="secondary-button"
+                          type="button"
+                          onClick={saveCreateDraft}
+                        >
+                          Save Draft
+                          <span aria-hidden="true">✓</span>
+                        </button>
+
+                        <button
+                          className="primary-button"
+                          type="button"
+                          onClick={() => openWorkspaceView("Publish")}
+                        >
+                          Move to Publish
+                          <span aria-hidden="true">→</span>
+                        </button>
+                      </div>
+                    </section>
+                  </div>
+                )}
+              </>
+            )}
+
             {workspaceView !== "Dashboard" &&
               workspaceView !== "Discover" &&
               workspaceView !== "Ideas" &&
-              workspaceView !== "Research" && (
+              workspaceView !== "Research" &&
+              workspaceView !== "Create" && (
                 <section className="workspace-empty">
                   <span className="section-label">
                     {workspaceView.toUpperCase()}
                   </span>
 
                   <h1>
-                    {workspaceView === "Create" && "Create workspace"}
                     {workspaceView === "Publish" && "Publishing workspace"}
                     {workspaceView === "Analytics" && "Analytics & learning"}
                     {workspaceView === "Settings" && "Workspace settings"}
