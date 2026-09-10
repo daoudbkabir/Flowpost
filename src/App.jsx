@@ -328,31 +328,38 @@ function App() {
     );
   };
 
-  const openCreateForResearch = (researchId) => {
-    const research = researchData[researchId];
-    if (!research) {
-      openWorkspaceView("Research");
+  const openResearchForIdea = (idea) => {
+    if (!researchData[idea.id]) {
+      startResearch(idea);
       return;
     }
 
+    setActiveResearchId(idea.id);
+    openWorkspaceView("Research");
+  };
+
+  const startCreate = (idea) => {
     setCreateData((currentCreate) => ({
       ...currentCreate,
-      [researchId]: {
-        ...(currentCreate[researchId] || {}),
-        ideaId: researchId,
-        title: currentCreate[researchId]?.title || research.title,
-        format: currentCreate[researchId]?.format || "Short-form video",
-        platform: currentCreate[researchId]?.platform || "Instagram",
-        brief: currentCreate[researchId]?.brief || research.findings || "",
-        hook: currentCreate[researchId]?.hook || "",
-        script: currentCreate[researchId]?.script || "",
-        cta: currentCreate[researchId]?.cta || "",
-        status: currentCreate[researchId]?.status || "Draft",
+      [idea.id]: {
+        ...(currentCreate[idea.id] || {}),
+        ideaId: idea.id,
+        title: currentCreate[idea.id]?.title || idea.title,
+        format: currentCreate[idea.id]?.format || "Short-form video",
+        platform:
+          currentCreate[idea.id]?.platform ||
+          idea.platforms?.[0] ||
+          "YouTube",
+        brief: currentCreate[idea.id]?.brief || "",
+        hook: currentCreate[idea.id]?.hook || "",
+        script: currentCreate[idea.id]?.script || "",
+        cta: currentCreate[idea.id]?.cta || "",
+        status: currentCreate[idea.id]?.status || "Draft",
         updatedAt: new Date().toISOString(),
       },
     }));
 
-    setActiveCreateId(researchId);
+    setActiveCreateId(idea.id);
     openWorkspaceView("Create");
   };
 
@@ -369,42 +376,37 @@ function App() {
     }));
   };
 
-  const saveCreateDraft = () => {
+  const saveDraft = () => {
     if (!activeCreateId) return;
 
     setCreateData((currentCreate) => ({
       ...currentCreate,
       [activeCreateId]: {
         ...(currentCreate[activeCreateId] || {}),
-        status: "Draft saved",
+        status: "Draft",
         updatedAt: new Date().toISOString(),
       },
     }));
   };
 
-  const openCreateFromResearch = () => {
-    if (activeResearchId) {
-      openCreateForResearch(activeResearchId);
-      return;
-    }
+  const moveToPublish = () => {
+    if (!activeCreateId) return;
 
-    const firstResearchId = Object.keys(researchData)[0];
-    if (firstResearchId) {
-      openCreateForResearch(firstResearchId);
-      return;
-    }
+    setCreateData((currentCreate) => ({
+      ...currentCreate,
+      [activeCreateId]: {
+        ...(currentCreate[activeCreateId] || {}),
+        status: "Ready to publish",
+        updatedAt: new Date().toISOString(),
+      },
+    }));
 
-    openWorkspaceView("Ideas");
+    openWorkspaceView("Publish");
   };
 
-  const openResearchForIdea = (idea) => {
-    if (!researchData[idea.id]) {
-      startResearch(idea);
-      return;
-    }
-
-    setActiveResearchId(idea.id);
-    openWorkspaceView("Research");
+  const getActiveCreateIdea = () => {
+    if (!activeCreateId) return null;
+    return savedIdeas.find((idea) => idea.id === activeCreateId) || null;
   };
 
   return (
@@ -807,7 +809,17 @@ function App() {
                         <button
                           className="primary-button"
                           type="button"
-                          onClick={() => openWorkspaceView("Create")}
+                          onClick={() => {
+                            const idea = savedIdeas.find(
+                              (savedIdea) => savedIdea.id === activeResearchId
+                            );
+
+                            if (idea) {
+                              startCreate(idea);
+                            } else {
+                              openWorkspaceView("Create");
+                            }
+                          }}
                         >
                           Move to Create
                           <span aria-hidden="true">→</span>
@@ -824,24 +836,33 @@ function App() {
                 <header className="workspace-header">
                   <div>
                     <span className="section-label">CREATE</span>
-                    <h1>Turn your research into content</h1>
-                    <p>Build a focused draft from the idea and research you have already developed.</p>
+                    <h1>Build your content</h1>
+                    <p>
+                      Turn a researched idea into a clear, platform-ready content draft.
+                    </p>
                   </div>
 
-                  <span className="badge">{activeCreateId && createData[activeCreateId]?.status ? createData[activeCreateId].status : "Draft"}</span>
+                  <span className="badge">
+                    {activeCreateId && createData[activeCreateId]
+                      ? createData[activeCreateId].status || "Draft"
+                      : "Start with an idea"}
+                  </span>
                 </header>
 
-                {!activeCreateId || !createData[activeCreateId] ? (
+                {!activeCreateId || !getActiveCreateIdea() ? (
                   <section className="workspace-empty">
-                    <span className="section-label">CONTENT BUILDER</span>
-                    <h1>Start from researched ideas</h1>
-                    <p>Choose a researched idea first, then turn it into a platform-ready content draft.</p>
+                    <span className="section-label">CREATE WORKSPACE</span>
+                    <h1>Select an idea to create</h1>
+                    <p>
+                      Start from a saved idea in Ideas. Your research and draft content
+                      will stay connected to that idea.
+                    </p>
                     <button
                       className="primary-button"
                       type="button"
-                      onClick={() => openWorkspaceView("Research")}
+                      onClick={() => openWorkspaceView("Ideas")}
                     >
-                      Open Research
+                      Open Ideas
                       <span aria-hidden="true">→</span>
                     </button>
                   </section>
@@ -850,57 +871,99 @@ function App() {
                     <section className="workspace-card workspace-create-brief">
                       <div className="workspace-card-header">
                         <div>
-                          <span className="section-label">CONTENT BRIEF</span>
-                          <h2>{createData[activeCreateId].title}</h2>
+                          <span className="section-label">
+                            {getActiveCreateIdea().category}
+                          </span>
+                          <h2>{getActiveCreateIdea().title}</h2>
                         </div>
-                        <span className="badge">Research connected</span>
+                        <span className="badge">Content draft</span>
                       </div>
-                      <p>Use the research as the source of truth for your content angle, audience need, and key message.</p>
+
+                      <p>
+                        Shape the idea into a focused piece of content. Keep the core
+                        message consistent while adapting the format and platform.
+                      </p>
+
+                      <div className="workspace-form-grid">
+                        <label>
+                          <span>Content title</span>
+                          <input
+                            type="text"
+                            value={createData[activeCreateId].title || ""}
+                            onChange={(event) =>
+                              updateCreateField("title", event.target.value)
+                            }
+                            placeholder="Give your content a clear working title"
+                          />
+                        </label>
+
+                        <label>
+                          <span>Format</span>
+                          <select
+                            value={createData[activeCreateId].format || ""}
+                            onChange={(event) =>
+                              updateCreateField("format", event.target.value)
+                            }
+                          >
+                            <option>Short-form video</option>
+                            <option>Long-form video</option>
+                            <option>Carousel</option>
+                            <option>Social post</option>
+                            <option>Thread</option>
+                            <option>Newsletter</option>
+                          </select>
+                        </label>
+
+                        <label>
+                          <span>Platform</span>
+                          <select
+                            value={createData[activeCreateId].platform || ""}
+                            onChange={(event) =>
+                              updateCreateField("platform", event.target.value)
+                            }
+                          >
+                            {platforms
+                              .filter((platform) => platform !== "Others")
+                              .map((platform) => (
+                                <option key={platform}>{platform}</option>
+                              ))}
+                          </select>
+                        </label>
+                      </div>
                     </section>
 
                     <div className="workspace-create-grid">
                       <section className="workspace-card workspace-create-panel">
                         <div className="workspace-card-header">
                           <div>
-                            <span className="section-label">SETUP</span>
-                            <h2>Content setup</h2>
+                            <span className="section-label">DIRECTION</span>
+                            <h2>Content brief</h2>
                           </div>
                         </div>
 
-                        <div className="workspace-form-grid">
+                        <div className="workspace-create-stack">
                           <label>
-                            <span>Title</span>
-                            <input
-                              value={createData[activeCreateId].title || ""}
-                              onChange={(event) => updateCreateField("title", event.target.value)}
-                              placeholder="Give your content a working title"
+                            <span>Brief</span>
+                            <textarea
+                              value={createData[activeCreateId].brief || ""}
+                              onChange={(event) =>
+                                updateCreateField("brief", event.target.value)
+                              }
+                              placeholder="What should this content communicate? Who is it for? What should the audience understand or do?"
+                              rows={7}
                             />
                           </label>
 
                           <label>
-                            <span>Format</span>
-                            <select
-                              value={createData[activeCreateId].format || "Short-form video"}
-                              onChange={(event) => updateCreateField("format", event.target.value)}
-                            >
-                              <option>Short-form video</option>
-                              <option>Carousel</option>
-                              <option>Social post</option>
-                              <option>Thread</option>
-                              <option>Long-form video</option>
-                            </select>
-                          </label>
-
-                          <label>
-                            <span>Platform</span>
-                            <select
-                              value={createData[activeCreateId].platform || "Instagram"}
-                              onChange={(event) => updateCreateField("platform", event.target.value)}
-                            >
-                              {platforms.filter((platform) => platform !== "Others").map((platform) => (
-                                <option key={platform}>{platform}</option>
-                              ))}
-                            </select>
+                            <span>Hook</span>
+                            <textarea
+                              value={createData[activeCreateId].hook || ""}
+                              onChange={(event) =>
+                                updateCreateField("hook", event.target.value)
+                              }
+                              placeholder="Write the opening line or first visual idea."
+                              rows={5}
+                            />
                           </label>
                         </div>
                       </section>
@@ -908,58 +971,40 @@ function App() {
                       <section className="workspace-card workspace-create-panel">
                         <div className="workspace-card-header">
                           <div>
-                            <span className="section-label">BRIEF</span>
-                            <h2>Content direction</h2>
+                            <span className="section-label">CONTENT</span>
+                            <h2>Script / caption</h2>
                           </div>
                         </div>
 
-                        <textarea
-                          value={createData[activeCreateId].brief || ""}
-                          onChange={(event) => updateCreateField("brief", event.target.value)}
-                          placeholder="What should this content explain, show, or help the audience do?"
-                          rows={8}
-                        />
+                        <div className="workspace-create-stack">
+                          <label>
+                            <span>Draft</span>
+                            <textarea
+                              value={createData[activeCreateId].script || ""}
+                              onChange={(event) =>
+                                updateCreateField("script", event.target.value)
+                              }
+                              placeholder="Build the main body of the content here..."
+                              rows={11}
+                            />
+                          </label>
+
+                          <label>
+                            <span>Call to action</span>
+                            <input
+                              type="text"
+                              value={createData[activeCreateId].cta || ""}
+                              onChange={(event) =>
+                                updateCreateField("cta", event.target.value)
+                              }
+                              placeholder="What should the audience do next?"
+                            />
+                          </label>
+                        </div>
                       </section>
                     </div>
 
                     <section className="workspace-card workspace-create-panel">
-                      <div className="workspace-card-header">
-                        <div>
-                          <span className="section-label">DRAFT</span>
-                          <h2>Build the content</h2>
-                        </div>
-                      </div>
-
-                      <div className="workspace-create-stack">
-                        <label>
-                          <span>Hook</span>
-                          <input
-                            value={createData[activeCreateId].hook || ""}
-                            onChange={(event) => updateCreateField("hook", event.target.value)}
-                            placeholder="Write the opening line that earns attention"
-                          />
-                        </label>
-
-                        <label>
-                          <span>Script / Caption</span>
-                          <textarea
-                            value={createData[activeCreateId].script || ""}
-                            onChange={(event) => updateCreateField("script", event.target.value)}
-                            placeholder="Develop the main content here..."
-                            rows={12}
-                          />
-                        </label>
-
-                        <label>
-                          <span>Call to action</span>
-                          <input
-                            value={createData[activeCreateId].cta || ""}
-                            onChange={(event) => updateCreateField("cta", event.target.value)}
-                            placeholder="What should the audience do next?"
-                          />
-                        </label>
-                      </div>
-
                       <div className="workspace-create-actions">
                         <button
                           className="secondary-button"
@@ -972,7 +1017,7 @@ function App() {
                         <button
                           className="secondary-button"
                           type="button"
-                          onClick={saveCreateDraft}
+                          onClick={saveDraft}
                         >
                           Save Draft
                           <span aria-hidden="true">✓</span>
@@ -981,7 +1026,7 @@ function App() {
                         <button
                           className="primary-button"
                           type="button"
-                          onClick={() => openWorkspaceView("Publish")}
+                          onClick={moveToPublish}
                         >
                           Move to Publish
                           <span aria-hidden="true">→</span>
